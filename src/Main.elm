@@ -12,19 +12,19 @@ import Json.Decode exposing (..)
 
 
 type alias Model =
-    { selectedFruit : Fruit
+    { fruitList : (List Fruit)
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ({ selectedFruit = Fruit "Apple" 1 "Delicious Fruit" "https://upload.wikimedia.org/wikipedia/commons/0/07/Honeycrisp-Apple.jpg"
+    ({ fruitList = []
     }, Cmd.none )
 
 
 type alias Fruit =
     { name : String
-    , price : Int
+    , price : Float
     , description : String
     , image : String
     }
@@ -33,35 +33,37 @@ type alias Fruit =
 
 
 type Msg
-    = SelectFruit Fruit
-    | UpdateFruitList -- peticion
+    = UpdateFruitList -- peticion
     | GotFruitList (Result Http.Error (List Fruit)) -- retorno
 
 
 getListFruits : Cmd Msg
 getListFruits =
     Http.get
-    {    url = "localhost:3000"
+    {    url = "http://localhost:3000"
     ,    expect = Http.expectJson GotFruitList jsonDecodeFruits  }
 
 jsonDecodeFruits : Decoder (List Fruit)
 jsonDecodeFruits =
+    Json.Decode.at["products"] <|
     list decodeFruits
 
 decodeFruits : Decoder Fruit
 decodeFruits =
     map4 Fruit
         (field "name" string)
-        (field "price" int)
+        (field "price" float)
         (field "description" string)
         (field "image" string)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SelectFruit fruit -> ( { model | selectedFruit = fruit }, Cmd.none )
-        UpdateFruitList -> ( model, getListFruits)
-        GotFruitList list_fruits -> ( model, Cmd.none)
+        UpdateFruitList -> ( model, getListFruits )
+        GotFruitList result -> 
+            case result of
+                Result.Ok value -> ( { model | fruitList = value } , Cmd.none)
+                Result.Err _ -> ( model, Cmd.none)
 
 fruit_list : List Fruit
 fruit_list = 
@@ -73,10 +75,8 @@ fruit_list =
 
 getColour : Model -> Fruit -> String
 getColour model fruit =
-    if model.selectedFruit == fruit then
-        "black"
-    else 
-        "white"
+    "black"
+
 
 view : Model -> Html Msg
 view model =
@@ -85,12 +85,12 @@ view model =
         , ul [] 
             (List.map (\el ->
                 let
-                    el_text = el.name  ++ " " ++ (String.fromInt el.price)
+                    el_text = el.name  ++ " | Price: " ++ (String.fromFloat el.price)
                 in
-                li [ style "border" ("solid 1px " ++ (getColour model el)), style "width" "200px", onClick (SelectFruit el)] 
+                li [ style "border" ("solid 1px " ++ (getColour model el)), style "width" "200px"] 
                     [ div [] [ text el_text ]
                     , img [ src el.image, width 200, height 200 ] []]
-            ) fruit_list)
+            ) model.fruitList)
         , button [ onClick UpdateFruitList ] [ text "update"]
         ]
 

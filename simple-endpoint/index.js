@@ -28,7 +28,7 @@ fastify.get('/', async (request, reply) => {
       price: 1
     },
     {
-      name: "Kiwifruit",
+      name: "Kiwi",
       image: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Kiwi_aka.jpg",
       description: "Kiwifruit (often abbreviated as kiwi outside New Zealand), or Chinese gooseberry, is the edible berry of several species of woody vines in the genus Actinidia. The most common cultivar group of kiwifruit (Actinidia deliciosa 'Hayward') is oval, about the size of a large hen's egg (5–8 cm (2.0–3.1 in) in length and 4.5–5.5 cm (1.8–2.2 in) in diameter). It has a thin, hair-like, fibrous, sour-but-edible light brown skin and light green or golden flesh with rows of tiny, black, edible seeds. The fruit has a soft texture with a sweet and unique flavour. China produced 50% of the world total of kiwifruit in 2017.",
       price: 4
