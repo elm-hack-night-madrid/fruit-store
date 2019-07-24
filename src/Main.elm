@@ -13,6 +13,7 @@ import Json.Decode exposing (..)
 
 type alias Model =
     { fruitList : (List Fruit)
+    , selectedFruit : String
     }
 
 
@@ -20,6 +21,7 @@ init : ( Model, Cmd Msg )
 init =
     (
     { fruitList = []
+    , selectedFruit = ""
     }, getListFruits )
 
 
@@ -36,6 +38,7 @@ type alias Fruit =
 type Msg
     = UpdateFruitList -- peticion
     | GotFruitList (Result Http.Error (List Fruit)) -- retorno
+    | SelectFruit String
 
 
 getListFruits : Cmd Msg
@@ -65,6 +68,7 @@ update msg model =
             case result of
                 Result.Ok value -> ( { model | fruitList = value } , Cmd.none)
                 Result.Err _ -> ( model, Cmd.none)
+        SelectFruit value -> ({ model | selectedFruit = value}, Cmd.none)
 
 fruit_list : List Fruit
 fruit_list = 
@@ -76,19 +80,23 @@ fruit_list =
 
 getColour : Model -> Fruit -> String
 getColour model fruit =
-    "black"
+    if fruit.name == model.selectedFruit then  
+        "black"
+    else
+        "white"
 
 
 view : Model -> Html Msg
 view model =
     div []
         [ h1 [] [ text "Fruit store" ]
+        , div [][ text "cccc"]
         , ul [] 
             (List.map (\el ->
                 let
-                    el_text = el.name  ++ " | Price: " ++ (String.fromFloat el.price)
+                    el_text = el.name
                 in
-                li [ style "border" ("solid 1px " ++ (getColour model el)), style "width" "200px"] 
+                li [ style "border" ("solid 1px " ++ (getColour model el)), style "width" "200px", onClick (SelectFruit el.name) ] 
                     [ div [] [ text el_text ]
                     , img [ src el.image, width 200, height 200 ] []]
             ) model.fruitList)
