@@ -1,6 +1,9 @@
 const fastify = require('fastify')({
-    logger: true
-})
+    logger: true,
+    origin: false,
+}).register(require('fastify-cors'), {
+  origin: false
+});
 
 // Declare a route
 fastify.get('/', async (request, reply) => {

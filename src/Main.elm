@@ -42,7 +42,7 @@ getListFruits : Cmd Msg
 getListFruits =
     Http.get
     {    url = "localhost:3000"
-    ,    expect = Http.expectJson (GotFruitList jsonDecodeFruits)  }
+    ,    expect = Http.expectJson GotFruitList jsonDecodeFruits  }
 
 jsonDecodeFruits : Decoder (List Fruit)
 jsonDecodeFruits =
@@ -60,7 +60,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SelectFruit fruit -> ( { model | selectedFruit = fruit }, Cmd.none )
-        UpdateFruitList -> ( model, Cmd.none)
+        UpdateFruitList -> ( model, getListFruits)
         GotFruitList list_fruits -> ( model, Cmd.none)
 
 fruit_list : List Fruit
