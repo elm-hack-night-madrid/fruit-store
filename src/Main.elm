@@ -18,8 +18,9 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ({ fruitList = []
-    }, Cmd.none )
+    (
+    { fruitList = []
+    }, getListFruits )
 
 
 type alias Fruit =
